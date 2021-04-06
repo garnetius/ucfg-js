@@ -102,7 +102,7 @@ parseDouble (idx) {
   let str = "";
   const len = this.size;
   const ucfg = this.input;
-  const regex = UCFG.pattern.dqstring;
+  const regex = USON.pattern.string;
 
   while (true) {
     regex.lastIndex = idx;
@@ -145,7 +145,7 @@ parseDouble (idx) {
 parseSingle (idx) {
   const len = this.size;
   const ucfg = this.input;
-  const regex = UCFG.pattern.sqstring;
+  const regex = UCFG.pattern.string;
   regex.lastIndex = idx;
   const match = regex.exec (ucfg);
 
@@ -343,7 +343,7 @@ skipCommentMulti (idx) {
   let depth = 1;
   const len = this.size;
   const ucfg = this.input;
-  const regex = UCFG.pattern.commentMulti;
+  const regex = USON.pattern.commentMulti;
 
   while (true) {
     /* Find where the multiline comment ends */
@@ -389,7 +389,7 @@ skipCommentMulti (idx) {
 skipCommentSingle (idx) {
   const len = this.size;
   const ucfg = this.input;
-  const regex = UCFG.pattern.commentSingle;
+  const regex = USON.pattern.commentSingle;
 
   /* Find the end of the line */
   regex.lastIndex = idx;
@@ -416,7 +416,7 @@ skipCommentSingle (idx) {
 skipWspace (idx) {
   const len = this.size;
   const ucfg = this.input;
-  const regex = UCFG.pattern.wspace;
+  const regex = USON.pattern.wspace;
 
   while (true) {
     regex.lastIndex = idx;
@@ -517,7 +517,7 @@ stringifyUndefined() {
 stringifyString (str) {
   let out = '"';
   let idx = 0;
-  const regex = UCFG.pattern.dqstring;
+  const regex = USON.pattern.string;
 
   while (true) {
     /* Find the next non-string character */
@@ -763,11 +763,7 @@ Object.defineProperties (UCFG, {
   }},
 
   pattern: {value: {
-    dqstring: /[\x00-\x1f\\"\x7f]/g,
-    sqstring: /[\x00-\x1f'\x7f]/g,
-    commentMulti: /[\x00-\x08\x0a-\x0c\x0e-\x1f()\x7f]/g,
-    commentSingle: /[\x00-\x08\x0a-\x0c\x0e-\x1f\x7f]/g,
-    wspace: /[^\x09\x0d\x20]/g
+    string: /[\x00-\x1f'\x7f]/g,
   }},
 
   /* Error constants */
