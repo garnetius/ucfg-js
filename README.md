@@ -9,7 +9,7 @@ Heavily inspired by **NGINX** configuration file syntax with additions for reada
 
 ## Example
 
-UCFG depends on USON:
+**UCFG** depends on [USON](https://github.com/garnetius/uson-js):
 
 ```bash
 git clone https://github.com/garnetius/core-js.git
