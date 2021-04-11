@@ -30,7 +30,6 @@ location ~ /(blog|wiki)/ {
     rotate: yes;
     template:
 'Clouded Server'
-''
 '[Event %d]: %s'
 ;
   }
