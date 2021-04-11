@@ -1,7 +1,7 @@
 /* ================================= $ J $ =====================================
 // <ucfg.mjs>
 //
-// UCFG: Universal Configuration.
+// UCFG: micro configuration file format.
 //
 // Copyright garnetius.
 // -------------------------------------------------------------------------- */
@@ -174,7 +174,7 @@ parseIdentifier (idx) {
   const start = idx;
   const len = this.size;
   const ucfg = this.input;
-  const regex = USON.pattern.identifier;
+  const regex = UCFG.pattern.identifier;
 
   if (start === len) {
     return this.parseError (UCFG.error.unexpectedEnd, len);
@@ -565,7 +565,7 @@ stringifyIdentifier (ident) {
 }
 
 stringifyStringAny (key) {
-  if (USON.isIdentifier (key)) this.stringifyIdentifier (key);
+  if (UCFG.isIdentifier (key)) this.stringifyIdentifier (key);
   else this.stringifyString (key);
 }
 
@@ -664,22 +664,27 @@ endSection (last) {
 
 stringifySection (map) {
   const items = map.entries();
+  const hasDefault = map.has (USON.$);
   let idx = 0;
 
   for (let [key, val] of items) {
+    if (key === USON.$) {
+      continue;
+    }
+
     if (val[0] instanceof Map) {
       let i = 0;
 
       for (let v of val) {
-        this.beginSection (key, v[USON.$]);
+        this.beginSection (key, v.get (USON.$));
         this.stringifySection (v);
-        this.endSection (++i === v.size);
+        this.endSection (++i === val.length);
       }
     } else {
       this.stringifyKV (key, val);
     }
 
-    if (idx !== map.size - 1) {
+    if (idx !== map.size - hasDefault - 1) {
       this.output += '\n';
     }
 
@@ -728,7 +733,7 @@ constructor (value, indent=2) {
   Object.defineProperties (this, {
     indent: {value: indent},
     depth:  {value: 0, writable: true},
-    output: {value: "", writable: true},
+    output: {value: "", writable: true, configurable: true},
     value:  {value: value, writable: true, configurable: true}
   });
 }}
@@ -741,6 +746,27 @@ const UCFG = new Object();
 
 Object.defineProperties (UCFG, {
   [Symbol.toStringTag]: {get: () => "UCFG"},
+
+  /* ===------------------------------------------------------
+  // Check if the character is a valid identifier character */
+  isIdentifierChar: {value: (chr) => {
+    switch (chr) {
+    case '{':
+    case '}':
+    case '"':
+    case "'":
+    case ':':
+    case ';':
+    case '\x7f': return false;
+    default: return chr.charCodeAt(0) > 32;
+    }
+  }},
+
+  /* ===----------------------------------------------
+  // Check if the string qualifies as an identifier */
+  isIdentifier: {value: (str) => str.length !== 0
+  && str.match (UCFG.pattern.identifier) === null
+  && str[0] !== '(' && str[0] !== '#'},
 
   /* ===-------------------------------
   // Emulate `USON.parse()` behavior */
@@ -764,6 +790,7 @@ Object.defineProperties (UCFG, {
 
   pattern: {value: {
     string: /[\x00-\x1f'\x7f]/g,
+    identifier: /[\x00-\x20:;"'{}\x7f]/g
   }},
 
   /* Error constants */
