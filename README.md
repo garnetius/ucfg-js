@@ -5,7 +5,7 @@ UCFG JS
 
 Micro configuration format implemented in JavaScript.
 
-## Configuration files
+## Configuration Files
 
 Although tempting, using [USON](https://github.com/garnetius/uson-js), JSON, YAML, or any other general-purpose data serialization format for the purpose of configuration isn’t a very good idea. The rigid structure imposed by such formats often reduces readability and strict grammar rules imposed by them make authoring configuration files by hand a less enjoyable experience.
 
